@@ -1,0 +1,17 @@
+# secrets
+.env
+.claude
+project-guide.md
+
+# virtual environment 
+venv/
+
+# python bytecode caches
+__pycache__/
+*.pyc
+
+# Local SQLite snapshot
+stock.db
+
+# macOS noise
+.DS_Store
