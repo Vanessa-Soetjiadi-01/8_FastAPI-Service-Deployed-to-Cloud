@@ -32,3 +32,12 @@ def get_stock(ticker: str):
                 row = cur.execute("SELECT ticker, date, open, high, low, close, volume, ma_7, ma_30, daily_change FROM stocks WHERE ticker = %s ORDER BY date DESC LIMIT 1", (ticker,)).fetchone()
                 column_names = [d.name for d in cur.description]
     return dict(zip(column_names, row))
+
+
+@app.get("/stocks/{ticker}/history")
+def get_history(ticker: str, days: int = 30):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            rows = cur.execute("SELECT ticker, date, open, high, low, close, volume, ma_7, ma_30, daily_change FROM stocks WHERE ticker=%s ORDER BY date DESC LIMIT %s", (ticker, days)).fetchall()
+            column_names = [d.name for d in cur.description]
+    return [dict(zip(column_names, row)) for row in rows]

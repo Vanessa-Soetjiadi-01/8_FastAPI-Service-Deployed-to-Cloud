@@ -3,23 +3,27 @@ import sqlite3
 from dotenv import load_dotenv
 import psycopg
 
-# fetched the URL from .env
+# db url from .env
 load_dotenv()
 DATABASE_URL = os.environ["DATABASE_URL"]
 
 SQLITE_PATH = "../7_python_etl_data_pipeline/stock.db"
 sqlite_conn = sqlite3.connect(SQLITE_PATH)
+
+# fetched the local data from my other project
 rows = sqlite_conn.execute(
-    "SELECT ticker, date, open, high, low, close, volume, ma_7, ma_30, daily_change FROM stocks"
+    "SELECT ticker, date, open, high, low, close, volume, ma_7, ma_30, daily_change "
+    "FROM stocks GROUP BY ticker, date"
 ).fetchall()
 print(f"Read {len(rows)} rows from stock.db")
 
-# cleaned the data and modified the data type for volume
+# cleaned the data
 cleaned = [
   (t, d, o, h, l, c, int(v), m7, m30, dc)
   for (t, d, o, h, l, c, v, m7, m30, dc) in rows
 ]
 
+# connect to db and created the db
 with psycopg.connect(DATABASE_URL) as conn:
     print("Connected to Neon!")
     with conn.cursor() as cur:
